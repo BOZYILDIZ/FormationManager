@@ -1,0 +1,107 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ g.translate('sync_api_title') }} - Formation Manager{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>{{ g.translate('sync_api_title') }}</h1>
+        <p class="lead">{{ g.translate('sync_api_description') }}</p>
+    </div>
+    <div class="col-auto">
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {{ g.translate('back') }}
+        </a>
+    </div>
+</div>
+
+<div class="row">
+    <!-- Configuration API -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">{{ g.translate('api_config_title') }}</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.save_api_config') }}">
+                    <div class="mb-3">
+                        <label for="api_url" class="form-label">{{ g.translate('api_url') }}</label>
+                        <input type="url" class="form-control" id="api_url" name="api_url" 
+                               value="{{ api_config.get('url', '') }}" required>
+                        <div class="form-text">{{ g.translate('api_url_help') }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="api_key" class="form-label">{{ g.translate('api_key') }}</label>
+                        <input type="text" class="form-control" id="api_key" name="api_key" 
+                               value="{{ api_config.get('key', '') }}" required>
+                        <div class="form-text">{{ g.translate('api_key_help') }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="api_secret" class="form-label">{{ g.translate('api_secret') }}</label>
+                        <input type="password" class="form-control" id="api_secret" name="api_secret" 
+                               value="{{ api_config.get('secret', '') }}" required>
+                        <div class="form-text">{{ g.translate('api_secret_help') }}</div>
+                    </div>
+                    
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="auto_sync" name="auto_sync" 
+                               {% if api_config.get('auto_sync', False) %}checked{% endif %}>
+                        <label class="form-check-label" for="auto_sync">{{ g.translate('api_auto_sync') }}</label>
+                        <div class="form-text">{{ g.translate('api_auto_sync_help') }}</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="sync_interval" class="form-label">{{ g.translate('api_sync_interval') }}</label>
+                        <select class="form-select" id="sync_interval" name="sync_interval">
+                            <option value="1" {% if api_config.get('sync_interval') == 1 %}selected{% endif %}>1 {{ g.translate('hour') }}</option>
+                            <option value="6" {% if api_config.get('sync_interval') == 6 %}selected{% endif %}>6 {{ g.translate('hours') }}</option>
+                            <option value="12" {% if api_config.get('sync_interval') == 12 %}selected{% endif %}>12 {{ g.translate('hours') }}</option>
+                            <option value="24" {% if api_config.get('sync_interval') == 24 %}selected{% endif %}>24 {{ g.translate('hours') }}</option>
+                        </select>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save me-2"></i> {{ g.translate('save_config') }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Synchronisation manuelle -->
+    <div class="col-md-6 mb-4">
+        <div class="card shadow h-100">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">{{ g.translate('sync_api_card_title') }}</h5>
+            </div>
+            <div class="card-body">
+                <p>{{ g.translate('sync_api_instructions') }}</p>
+                
+                <div class="alert alert-info">
+                    <i class="fas fa-info-circle me-2"></i> {{ g.translate('sync_api_info') }}
+                </div>
+                
+                {% if last_sync %}
+                <div class="alert alert-success">
+                    <i class="fas fa-check-circle me-2"></i> {{ g.translate('last_sync') }}: {{ last_sync.strftime('%d/%m/%Y %H:%M') }}
+                    <br>
+                    <small>{{ g.translate('sync_results') }}: {{ sync_stats.get('new_clients', 0) }} {{ g.translate('new_clients') }}, {{ sync_stats.get('updated_clients', 0) }} {{ g.translate('updated_clients') }}</small>
+                </div>
+                {% endif %}
+                
+                <form method="POST" action="{{ url_for('admin.sync_api') }}">
+                    <div class="d-grid mt-4">
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-sync-alt me-2"></i> {{ g.translate('sync_api_button') }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,79 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ g.translate('add_product_title') }} - {{ client.name }} - Formation Manager{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>{{ g.translate('add_product_title') }}</h1>
+        <p class="text-muted">{{ g.translate('client_name') }}: {{ client.name }}</p>
+    </div>
+    <div class="col-auto">
+        <a href="{{ url_for('client.client_detail', client_id=client.id) }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {{ g.translate('back') }}
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">{{ g.translate('product_info') }}</h5>
+            </div>
+            <div class="card-body">
+                {% set total_products = client.products|sum(attribute='price') %}
+                {% set remaining = client.bon_value - total_products %}
+                {% set percentage = (total_products / client.bon_value * 100)|round|int if client.bon_value > 0 else 0 %}
+                
+                <div class="alert alert-info mb-4">
+                    <div class="d-flex justify-content-between">
+                        <div>
+                            <i class="fas fa-info-circle me-2"></i> {{ g.translate('bon_available') }}: <strong>{{ client.bon_value }} €</strong>
+                        </div>
+                        <div>
+                            <strong class="text-success">{{ g.translate('product_remaining') }}: {{ remaining }} €</strong>
+                        </div>
+                    </div>
+                    <div class="progress mt-2" style="height: 10px;">
+                        <div class="progress-bar bg-success" role="progressbar" style="width: {{ percentage }}%" 
+                             aria-valuenow="{{ percentage }}" aria-valuemin="0" aria-valuemax="100">
+                        </div>
+                    </div>
+                    <div class="d-flex justify-content-between mt-1">
+                        <small class="text-muted">{{ g.translate('already_used') }}: {{ total_products }} € ({{ percentage }}%)</small>
+                        <small class="fw-bold">{{ percentage }}%</small>
+                    </div>
+                </div>
+                
+                <form method="POST" action="{{ url_for('client.add_product', client_id=client.id) }}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">{{ g.translate('product_name') }}</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="url" class="form-label">{{ g.translate('product_url') }}</label>
+                        <input type="url" class="form-control" id="url" name="url" placeholder="https://...">
+                        <div class="form-text">{{ g.translate('product_url_help') }}</div>
+                    </div>
+                    <div class="mb-3">
+                        <label for="price" class="form-label">{{ g.translate('product_price') }}</label>
+                        <div class="input-group">
+                            <input type="number" class="form-control" id="price" name="price" step="0.01" min="0" required>
+                            <span class="input-group-text">€</span>
+                        </div>
+                        {% if remaining > 0 %}
+                        <div class="form-text text-success">{{ g.translate('max_recommended') }}: {{ remaining }} €</div>
+                        {% else %}
+                        <div class="form-text text-warning">{{ g.translate('bon_fully_used') }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">{{ g.translate('add_product_button') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

@@ -1,0 +1,56 @@
+{% extends 'base.html' %}
+
+{% block title %}Nouvel Utilisateur - Formation Manager{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>Nouvel Utilisateur</h1>
+    </div>
+    <div class="col-auto">
+        <a href="{{ url_for('admin.users') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> Retour
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">Informations de l'utilisateur</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('admin.create_user') }}">
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="password" class="form-label">Mot de passe</label>
+                        <input type="password" class="form-control" id="password" name="password" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="role" class="form-label">Rôle</label>
+                        <select class="form-select" id="role" name="role" required>
+                            <option value="operateur">Opérateur</option>
+                            <option value="admin">Admin</option>
+                            <option value="superadmin">Superadmin</option>
+                        </select>
+                        <div class="form-text">
+                            <ul>
+                                <li><strong>Opérateur</strong>: Peut uniquement voir les clients et marquer les produits comme livrés</li>
+                                <li><strong>Admin</strong>: Peut gérer les clients, les formations et les produits</li>
+                                <li><strong>Superadmin</strong>: Peut uniquement gérer les utilisateurs</li>
+                            </ul>
+                        </div>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">Créer l'utilisateur</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

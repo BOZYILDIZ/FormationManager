@@ -1,0 +1,123 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ g.translate('import_edof_title') }} - Formation Manager{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>{{ g.translate('import_edof_title') }}</h1>
+    </div>
+    <div class="col-auto">
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {{ g.translate('back') }}
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">Importation directe</h5>
+            </div>
+            <div class="card-body">
+                <p>Importer directement le fichier EDOF présent dans le dossier racine :</p>
+                <p><code>Export_Tous les dossiers_81834734600020_20250710.csv</code></p>
+                <a href="{{ url_for('admin.import_edof_direct') }}" class="btn btn-success">
+                    <i class="fas fa-file-import"></i> Importer directement
+                </a>
+            </div>
+        </div>
+        
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">{{ g.translate('import_edof_title') }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="alert alert-info">
+                    <h5><i class="fas fa-info-circle"></i> {{ g.translate('info') }}</h5>
+                    <p>{{ g.translate('import_edof_instructions') }}</p>
+                    <p>{{ g.translate('import_edof_file_help') }}</p>
+                    <ul>
+                        <li><strong>CPF-ID</strong> : {{ g.translate('client_cpf_id') }}</li>
+                        <li><strong>Nom</strong> : {{ g.translate('client_name') }}</li>
+                        <li><strong>Email</strong> : {{ g.translate('client_email') }}</li>
+                        <li><strong>Téléphone</strong> : {{ g.translate('client_phone') }}</li>
+                        <li><strong>Formation</strong> : {{ g.translate('client_formation') }}</li>
+                        <li><strong>Code RS</strong> : {{ g.translate('client_code_rs') }}</li>
+                        <li><strong>Prix</strong> : {{ g.translate('client_formation_price') }}</li>
+                        <li><strong>Statut</strong> : {{ g.translate('client_formation_status') }}</li>
+                        <li><strong>Date début</strong> : {{ g.translate('client_start_date') }}</li>
+                        <li><strong>Date fin</strong> : {{ g.translate('client_end_date') }}</li>
+                        <li><strong>Date facturation</strong> : {{ g.translate('client_expected_payment') }}</li>
+                        <li><strong>Paiement reçu</strong> : {{ g.translate('client_payment_status') }}</li>
+                    </ul>
+                </div>
+                
+                <form method="POST" enctype="multipart/form-data">
+                    <div class="mb-3">
+                        <label for="csv_file" class="form-label">{{ g.translate('import_edof_file') }}</label>
+                        <input type="file" class="form-control" id="csv_file" name="csv_file" accept=".csv" required>
+                        <div class="form-text">{{ g.translate('import_edof_file_help') }}</div>
+                    </div>
+                    
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-file-import"></i> {{ g.translate('import_edof_button') }}
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        
+        <div class="card shadow mt-4">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">{{ g.translate('import_edof_example') }}</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-sm table-bordered">
+                        <thead>
+                            <tr>
+                                <th>CPF-ID</th>
+                                <th>Nom</th>
+                                <th>Email</th>
+                                <th>Téléphone</th>
+                                <th>Formation</th>
+                                <th>Code RS</th>
+                                <th>Prix</th>
+                                <th>Statut</th>
+                                <th>Date début</th>
+                                <th>Date fin</th>
+                                <th>Date facturation</th>
+                                <th>Paiement reçu</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>CPF-391288569047</td>
+                                <td>Murat KARABINAR</td>
+                                <td>murat@example.com</td>
+                                <td>+33612345678</td>
+                                <td>Bilan de Compétences Courte Durée</td>
+                                <td>RS123</td>
+                                <td>1500 €</td>
+                                <td>accepté</td>
+                                <td>08/07/2025</td>
+                                <td>09/07/2025</td>
+                                <td>10/07/2025</td>
+                                <td>Non</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div class="mt-3">
+                    <a href="{{ url_for('admin.download_csv_template') }}" class="btn btn-sm btn-outline-secondary">
+                        <i class="fas fa-download"></i> {{ g.translate('import_edof_download') }}
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

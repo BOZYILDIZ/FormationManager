@@ -1,0 +1,40 @@
+{% extends 'base.html' %}
+
+{% block title %}Accès refusé - Formation Manager{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-danger text-white">
+                <h4 class="mb-0">Accès refusé (403)</h4>
+            </div>
+            <div class="card-body">
+                <div class="text-center mb-4">
+                    <i class="fas fa-exclamation-triangle text-danger" style="font-size: 4rem;"></i>
+                </div>
+                <h5 class="text-center mb-4">Vous n'êtes pas autorisé à accéder à cette page.</h5>
+                <p class="text-center">
+                    Informations de débogage:
+                    <br>
+                    {% if current_user.is_authenticated %}
+                        Utilisateur: {{ current_user.email }}
+                        <br>
+                        Rôle: {{ current_user.role }}
+                    {% else %}
+                        Utilisateur non connecté
+                    {% endif %}
+                </p>
+                <div class="d-flex justify-content-center mt-4">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-primary me-2">
+                        <i class="fas fa-home"></i> Accueil
+                    </a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-primary">
+                        <i class="fas fa-sign-in-alt"></i> Connexion
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 

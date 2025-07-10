@@ -1,0 +1,144 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ g.translate('client_edit') }} {{ client.name }} - Formation Manager{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>{{ g.translate('client_edit') }}</h1>
+    </div>
+    <div class="col-auto">
+        <a href="{{ url_for('client.client_detail', client_id=client.id) }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {{ g.translate('back') }}
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">{{ g.translate('client_info') }}</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('client.edit_client', client_id=client.id) }}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">{{ g.translate('client_name') }}</label>
+                        <input type="text" class="form-control" id="name" name="name" value="{{ client.name }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">{{ g.translate('client_email') }}</label>
+                        <input type="email" class="form-control" id="email" name="email" value="{{ client.email }}" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">{{ g.translate('client_phone') }}</label>
+                        <input type="tel" class="form-control" id="phone" name="phone" value="{{ client.phone or '' }}">
+                    </div>
+                    <div class="mb-3">
+                        <label for="formation_id" class="form-label">{{ g.translate('client_formation') }}</label>
+                        <select class="form-select" id="formation_id" name="formation_id" required>
+                            {% for formation in formations %}
+                            <option value="{{ formation.id }}" {% if formation.id == client.formation_id %}selected{% endif %}>
+                                {{ formation.title }} ({{ formation.price }} €)
+                            </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    
+                    <!-- Bon d'achat -->
+                    <div class="card mb-3">
+                        <div class="card-header bg-light">
+                            <h6 class="mb-0">{{ g.translate('client_bon_value') }}</h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="mb-3">
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="bon_type" id="bon_percentage" value="percentage" 
+                                           {% if not client.use_fixed_bon %}checked{% endif %} onchange="toggleBonFields()">
+                                    <label class="form-check-label" for="bon_percentage">Pourcentage</label>
+                                </div>
+                                <div class="form-check form-check-inline">
+                                    <input class="form-check-input" type="radio" name="bon_type" id="bon_fixed" value="fixed" 
+                                           {% if client.use_fixed_bon %}checked{% endif %} onchange="toggleBonFields()">
+                                    <label class="form-check-label" for="bon_fixed">Valeur fixe</label>
+                                </div>
+                            </div>
+                            
+                            <div id="percentage_field" class="mb-3" {% if client.use_fixed_bon %}style="display:none"{% endif %}>
+                                <label for="bon_percentage" class="form-label">Pourcentage (%)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="bon_percentage_value" name="bon_percentage" 
+                                           value="{{ client.bon_percentage }}" min="0" max="100" step="0.1">
+                                    <span class="input-group-text">%</span>
+                                </div>
+                                <small class="form-text text-muted">
+                                    Valeur calculée: <span id="calculated_value">{{ client.bon_value }} €</span>
+                                </small>
+                            </div>
+                            
+                            <div id="fixed_field" class="mb-3" {% if not client.use_fixed_bon %}style="display:none"{% endif %}>
+                                <label for="bon_value" class="form-label">Valeur fixe (€)</label>
+                                <div class="input-group">
+                                    <input type="number" class="form-control" id="bon_value" name="bon_value" 
+                                           value="{{ client.bon_value }}" min="0" step="0.01">
+                                    <span class="input-group-text">€</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="invoice_date" class="form-label">{{ g.translate('client_expected_payment') }}</label>
+                        <input type="date" class="form-control" id="invoice_date" name="invoice_date" 
+                               value="{{ client.invoice_date.strftime('%Y-%m-%d') if client.invoice_date else '' }}">
+                    </div>
+                    <div class="mb-3 form-check">
+                        <input type="checkbox" class="form-check-input" id="payment_received" name="payment_received" 
+                               {% if client.payment_received %}checked{% endif %}>
+                        <label class="form-check-label" for="payment_received">{{ g.translate('client_paid') }}</label>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">{{ g.translate('save') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+    function toggleBonFields() {
+        const percentageType = document.getElementById('bon_percentage').checked;
+        const percentageField = document.getElementById('percentage_field');
+        const fixedField = document.getElementById('fixed_field');
+        
+        if (percentageType) {
+            percentageField.style.display = 'block';
+            fixedField.style.display = 'none';
+        } else {
+            percentageField.style.display = 'none';
+            fixedField.style.display = 'block';
+        }
+    }
+    
+    // Calculer la valeur du bon en fonction du pourcentage
+    document.getElementById('bon_percentage_value').addEventListener('input', function() {
+        const percentage = parseFloat(this.value) || 0;
+        const formationSelect = document.getElementById('formation_id');
+        const selectedOption = formationSelect.options[formationSelect.selectedIndex];
+        const formationPrice = parseFloat(selectedOption.text.match(/\(([^)]+)\)/)[1]) || 0;
+        
+        const calculatedValue = (percentage / 100 * formationPrice).toFixed(2);
+        document.getElementById('calculated_value').textContent = calculatedValue + ' €';
+    });
+    
+    // Recalculer quand la formation change
+    document.getElementById('formation_id').addEventListener('change', function() {
+        const percentageInput = document.getElementById('bon_percentage_value');
+        const event = new Event('input');
+        percentageInput.dispatchEvent(event);
+    });
+</script>
+{% endblock %} 

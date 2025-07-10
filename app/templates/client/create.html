@@ -1,0 +1,53 @@
+{% extends 'base.html' %}
+
+{% block title %}{{ g.translate('nav_new_client') }} - Formation Manager{% endblock %}
+
+{% block content %}
+<div class="row mb-4">
+    <div class="col">
+        <h1>{{ g.translate('nav_new_client') }}</h1>
+    </div>
+    <div class="col-auto">
+        <a href="{{ url_for('main.dashboard') }}" class="btn btn-secondary">
+            <i class="fas fa-arrow-left"></i> {{ g.translate('back') }}
+        </a>
+    </div>
+</div>
+
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow">
+            <div class="card-header bg-primary text-white">
+                <h5 class="mb-0">{{ g.translate('client_info') }}</h5>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('client.create_client') }}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">{{ g.translate('client_name') }}</label>
+                        <input type="text" class="form-control" id="name" name="name" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="email" class="form-label">{{ g.translate('client_email') }}</label>
+                        <input type="email" class="form-control" id="email" name="email" required>
+                    </div>
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">{{ g.translate('client_phone') }}</label>
+                        <input type="tel" class="form-control" id="phone" name="phone">
+                    </div>
+                    <div class="mb-3">
+                        <label for="formation_id" class="form-label">{{ g.translate('client_formation') }}</label>
+                        <select class="form-select" id="formation_id" name="formation_id" required>
+                            {% for formation in formations %}
+                            <option value="{{ formation.id }}">{{ formation.title }} ({{ formation.price }} €)</option>
+                            {% endfor %}
+                        </select>
+                    </div>
+                    <div class="d-grid">
+                        <button type="submit" class="btn btn-primary">{{ g.translate('save') }}</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %} 
