@@ -1,27 +1,22 @@
 # Formation Manager
 
-Une application web pour gérer les formations, les bons d'achat et les commandes de produits.
+Application web de gestion des formations CPF et des bons d'achat associés.
 
 ## Fonctionnalités
 
-- Synchronisation avec l'API WEDOF toutes les 60 secondes
-- Calcul automatique des bons d'achat (30% du prix de la formation)
 - Gestion des clients et de leurs formations
-- Suivi des produits commandés avec le bon d'achat
-- Système d'authentification avec différents rôles utilisateur (superadmin, admin, operateur)
-
-## Rôles utilisateur
-
-- **superadmin**: Gestion des utilisateurs uniquement
-- **admin**: Gestion des clients, formations et produits
-- **operateur**: Consultation des clients et marquage des produits comme livrés
+- Gestion des bons d'achat (valeur fixe ou pourcentage)
+- Synchronisation avec l'API WEDOF
+- Gestion des utilisateurs avec différents rôles (superadmin, admin, opérateur)
+- Interface multilingue (français, turc)
+- Journalisation des actions et des erreurs
 
 ## Installation
 
 1. Cloner le dépôt
 ```bash
-git clone <url-du-depot>
-cd Training_Check_Platform
+git clone https://github.com/BOZYILDIZ/FormationManager.git
+cd FormationManager
 ```
 
 2. Créer un environnement virtuel et l'activer
@@ -35,62 +30,36 @@ source venv/bin/activate  # Sur Windows: venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-4. Initialiser la base de données
+4. Lancer l'application
 ```bash
-flask init-db
+python run.py
 ```
 
-5. Lancer l'application
-```bash
-flask run
-```
+L'application sera accessible à l'adresse http://localhost:5000
 
-## Utilisation
+## Configuration
 
-1. Accéder à l'application via http://localhost:5000
-2. Se connecter avec les identifiants par défaut:
-   - Superadmin: admin@example.com / admin123
-   - Admin: user@example.com / user123
-   - Opérateur: operateur@example.com / operateur123
+### API WEDOF
 
-## Structure du projet
+Pour configurer la connexion à l'API WEDOF :
+1. Connectez-vous en tant qu'administrateur
+2. Accédez à la page "API WEDOF" dans la barre de navigation
+3. Renseignez l'URL, la clé API et le secret API
+4. Activez ou désactivez la synchronisation automatique selon vos besoins
+5. Cliquez sur "Enregistrer la configuration"
 
-```
-Training_Check_Platform/
-  ├── app/                      # Package principal de l'application
-  │   ├── models/               # Modèles de données
-  │   ├── routes/               # Routes et vues
-  │   ├── services/             # Services (API sync, etc.)
-  │   ├── static/               # Fichiers statiques (CSS, JS, images)
-  │   ├── templates/            # Templates HTML
-  │   └── utils/                # Utilitaires
-  ├── migrations/               # Migrations de base de données
-  ├── run.py                    # Point d'entrée de l'application
-  └── requirements.txt          # Dépendances Python
-```
+### Utilisateurs par défaut
 
-## Déploiement
+- Superadmin: admin@example.com / admin123
+- Admin: user@example.com / user123
+- Opérateur: operateur@example.com / operateur123
 
-Pour déployer l'application en production:
+## Journalisation
 
-1. Configurer les variables d'environnement:
-   - `SECRET_KEY`: Clé secrète pour la sécurité de l'application
-   - `DATABASE_URL`: URL de la base de données (si différente de SQLite)
+Les journaux sont stockés dans le dossier `instance/logs/` :
+- `errors.log` : Erreurs techniques
+- `user_actions.log` : Actions des utilisateurs
 
-2. Exécuter avec Gunicorn:
-```bash
-gunicorn "app:create_app()"
-```
+## Licence
 
-## Développement
-
-Pour contribuer au développement:
-
-1. Créer une branche pour votre fonctionnalité
-```bash
-git checkout -b ma-nouvelle-fonctionnalite
-```
-
-2. Effectuer vos modifications et les tester
-
-3. Soumettre une pull request 
+© 2023 Formation Manager 
